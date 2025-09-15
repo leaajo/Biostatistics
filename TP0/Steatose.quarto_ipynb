@@ -1,0 +1,40 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Steatose\"\n",
+        "format: pdf\n",
+        "editor: visual\n",
+        "---\n",
+        "\n",
+        "\n",
+        "# TP 0 : Start your first project !\n",
+        "\n",
+        "Hepatic steatosis is a common feature of metabolic liver diseases and an early marker of disease progression.\n"
+      ],
+      "id": "e536f213"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print('slt')"
+      ],
+      "id": "a2fbb595",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

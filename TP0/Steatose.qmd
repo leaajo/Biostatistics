@@ -1,0 +1,116 @@
+---
+title: "Steatose"
+format: pdf
+editor: visual
+---
+
+# TP 0 : Start your first project !
+
+### What is metabolic hepatic steatosis ? How many mice are used? What treatments do they receive? How many groups are there?
+
+-   Hepatic steatosis is a common feature of metabolic liver diseases and an early marker of disease progression. Hepatic steatosis is characterized by an abnormal lipid accumulation within hepatocytes and may evolve with the appearance of hepatic lesions, such as hepatocyte ballooning and inflammation, that characterize the development of Metabolic Associated Steato-Hepatitis (MASH).
+
+    On l'appelle aussi la maladie du soda je crois...
+
+-   Dans l'article, 97 souris âgées de 8 semaines sont utilisées pour l'étude. Elles sont réparties en 4 groupes.
+
+| Groupe | Régime (Diet Control) | Injection    |
+|--------|-----------------------|--------------|
+| 1      | Yes                   | Iron-Dextran |
+| 2      | Yes                   | Dextran only |
+| 3      | No                    | Iron-Dextran |
+| 4      | No                    | Dextran only |
+
+: Répartition des groupes de souris utilisées
+
+```{r}
+library(readr)
+meta_data <- read_delim("Steatosis_phenotype.csv",
+delim = ";", escape_double = FALSE, trim_ws = TRUE)
+View(meta_data)
+str(meta_data)
+```
+
+Nous retirons les individus pour lesquels il manque des informations :
+
+```{r}
+lines_with_na = which(is.na(apply(meta_data[,-c(2,4)], 1, sum)))
+```
+
+```{r}
+# Nombre total d'échantillons
+total_samples <- nrow(meta_data)
+cat("Nombre total de souris :", total_samples, "\n")
+
+# Nombre de groupes de traitement
+nb_groups <- length(unique(meta_data$Group))
+cat("Nombre de groupes de traitement :", nb_groups, "\n")
+
+
+samples_per_group <- table(meta_data$Group)
+print("Nombre de souris par groupe :")
+print(samples_per_group)
+
+```
+
+Il y a une souris en moins qu'annoncées. Cela doit être expliqué dans l'article, mais il faudrait retrouver la citation.
+
+```{r}
+library(dplyr)
+meta_data %>%
+group_by(Group) %>%
+summarise(mean = mean(Cholesterol,na.rm = TRUE),
+std = sd(Cholesterol,na.rm = TRUE),
+n = n())
+```
+
+Nous faisons les boxplots :
+
+[Avec \\ggplot2 :]{.underline}
+
+```{r}
+library(ggplot2)
+
+# Avec couleurs et thème
+ggplot(meta_data, aes(x = Group, y = Cholesterol, fill = Group)) +
+  geom_boxplot() +
+  labs(title = "Boxplot du cholestérol des souris en fonction de leur groupe",
+       x = "Groupes", 
+       y = "Teneur en cholestérol") +
+  theme_minimal() +
+  theme(legend.position = "none") 
+```
+
+[Sans ggplot2 (test) :]{.underline}
+
+```{r}
+# boxplot pour l'entièreté du jeu de données
+boxplot(meta_data$Cholesterol)
+
+# Boxplot par groupe
+boxplot(Cholesterol ~ Group, data = meta_data)
+
+# avec des couleurs
+boxplot(Cholesterol ~ Group, 
+        data = meta_data,
+        main = "Boxplot du choléstérol des souris en fonction de leur groupe",
+        xlab = "Groupes",
+        ylab = "Teneur en choléstérol",
+        col = c("lightblue", "lightgreen", "pink"))
+```
+
+```{r}
+library(tidyr) #rajout de la librarie nécessaire 
+
+df.explore = meta_data[,-c(1,4)]
+resume_stats <- df.explore %>%
+pivot_longer(cols = -Group,
+names_to = "Variable",
+values_to = "Valeur") %>%
+group_by(Group, Variable) %>%
+summarise(
+Mean = mean(Valeur, na.rm = TRUE),
+SD = sd(Valeur, na.rm = TRUE),
+.groups = "drop"
+)
+```
